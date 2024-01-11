@@ -13,12 +13,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class AuthTokenServiceTest {
 
-    @Autowired
-    AuthTokenService authTokenService;
+    private static final String name = "neppiness";
 
-    private final String name = "neppiness";
-    private final Double latitude = 37.146192955;
-    private final Double longitude = 127.0693630667;
+    private static final Double latitude = 37.146192955;
+
+    private static final Double longitude = 127.0693630667;
+
+    @Autowired
+    private AuthTokenService authTokenService;
 
     @DisplayName("토큰 생성 테스트")
     @Test

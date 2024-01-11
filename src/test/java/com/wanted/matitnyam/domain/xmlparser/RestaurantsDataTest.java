@@ -14,10 +14,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class RestaurantsDataTest {
 
-    @Autowired
-    RestaurantsDataParser restaurantsDataParser;
+    private static final ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
 
-    private final ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
+    @Autowired
+    private RestaurantsDataParser restaurantsDataParser;
 
     @DisplayName("xml 전처리 테스트: 시 정보가 없는 음식점은 제외된다.")
     @Test
@@ -31,8 +31,8 @@ class RestaurantsDataTest {
         System.out.println();
 
         restaurantsData = restaurantsData.preprocess();
-        String processedDataInJson = objectWriter.writeValueAsString(restaurantsData);
-        System.out.println(processedDataInJson);
+        String processedDataAsString = objectWriter.writeValueAsString(restaurantsData);
+        System.out.println(processedDataAsString);
 
         Assertions
                 .assertThat(restaurantsData.getRestaurants().size())

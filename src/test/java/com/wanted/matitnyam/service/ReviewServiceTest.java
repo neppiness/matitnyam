@@ -7,7 +7,6 @@ import com.wanted.matitnyam.domain.Restaurant;
 import com.wanted.matitnyam.domain.Review;
 import com.wanted.matitnyam.dto.ReviewRequest;
 import com.wanted.matitnyam.dto.ReviewResponse;
-import com.wanted.matitnyam.repository.MemberRepository;
 import com.wanted.matitnyam.repository.RestaurantRepository;
 import com.wanted.matitnyam.repository.ReviewRepository;
 import java.util.Optional;
@@ -16,27 +15,23 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.transaction.annotation.Transactional;
 
-@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 @Transactional
-@Sql(value = "classpath:test/h2.sql")
+@Sql(value = "classpath:test/reset.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
+@Sql(value = "classpath:test/init.sql")
 @SpringBootTest
 class ReviewServiceTest {
 
-    private final ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
+    private static final ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
 
     @Autowired
     private RestaurantRepository restaurantRepository;
 
     @Autowired
     private ReviewRepository reviewRepository;
-
-    @Autowired
-    private MemberRepository memberRepository;
 
     @Autowired
     private ReviewService reviewService;
@@ -67,6 +62,7 @@ class ReviewServiceTest {
         Optional<Restaurant> mayBeUpdatedRestaurant = restaurantRepository.findById(restaurantId);
         assert mayBeUpdatedRestaurant.isPresent();
         Restaurant updatedRestaurant = mayBeUpdatedRestaurant.get();
+
         String updatedRestaurantAsString = objectWriter.writeValueAsString(updatedRestaurant);
         System.out.println("리뷰 생성 후 갱신된 맛집 조회 결과:");
         System.out.println(updatedRestaurantAsString);
@@ -105,6 +101,7 @@ class ReviewServiceTest {
         Optional<Restaurant> mayBeFoundRestaurant = restaurantRepository.findById(restaurantId);
         assert mayBeFoundRestaurant.isPresent();
         Restaurant foundRestaurant = mayBeFoundRestaurant.get();
+
         String foundRestaurantAsString = objectWriter.writeValueAsString(foundRestaurant);
         System.out.println("\n리뷰 작성 후 갱신된 맛집 조회 결과:");
         System.out.println(foundRestaurantAsString);

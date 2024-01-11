@@ -12,26 +12,24 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 
+@Sql(value = "classpath:test/reset.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
+@Sql(value = "classpath:test/init.sql")
 @DataJpaTest
 class MemberRepositoryTest {
 
+    private static final String username = "kim-jeonghyun";
+
+    private static final String password = "1234";
+
     @Autowired
-    MemberRepository memberRepository;
-
-    private final String username = "kim-jeonghyun";
-
-    private final String password = "1234";
+    private MemberRepository memberRepository;
 
     @DisplayName("동일한 유저 이름이 있는 경우에 대한 테스트")
     @Test
     void hasDuplicatedNameTest() {
-        Member member = Member.builder()
-                .name(username)
-                .password(password)
-                .build();
-        memberRepository.save(member);
-
         Assertions
                 .assertThat(memberRepository.hasDuplicatedName(username))
                 .isTrue();
@@ -40,12 +38,6 @@ class MemberRepositoryTest {
     @DisplayName("유저 이름과 패스워드로 유저를 찾는 메소드 테스트")
     @Test
     void findIdByUsernameAndPasswordTest() {
-        Member member = Member.builder()
-                .name(username)
-                .password(password)
-                .build();
-        memberRepository.save(member);
-
         MemberRequest memberRequest = MemberRequest.builder()
                 .name(username)
                 .password(password)
@@ -63,12 +55,6 @@ class MemberRepositoryTest {
     @DisplayName("유저 이름과 패스워드로 유저를 찾는 메소드 예외 테스트")
     @Test
     void findIdByNameAndPasswordExceptionTest() {
-        Member member = Member.builder()
-                .name(username)
-                .password(password)
-                .build();
-        memberRepository.save(member);
-
         String wrongPassword = "1235";
         MemberRequest memberRequest = MemberRequest.builder()
                 .name(username)
@@ -84,14 +70,7 @@ class MemberRepositoryTest {
     @DisplayName("유저 이름으로 해당 유저를 찾는 메소드 테스트")
     @Test
     void findByUsernameTest() {
-        Member member = Member.builder()
-                .name(username)
-                .password(password)
-                .build();
-        memberRepository.save(member);
-
         Optional<Member> mayBeFoundMember = memberRepository.findByUsername(username);
-
         Assertions
                 .assertThat(mayBeFoundMember.isPresent())
                 .isTrue();
@@ -100,28 +79,28 @@ class MemberRepositoryTest {
     @DisplayName("유저 상세 정보 조회 메소드 테스트")
     @Test
     void findDetailsTest() {
+        Optional<Member> mayBeFoundMember = memberRepository.findByUsername(username);
+        assert mayBeFoundMember.isPresent();
+        Member foundMember = mayBeFoundMember.get();
+
         Double latitude = 3.14;
         Double longitude = 1.592;
-        Member member = Member.builder()
-                .name(username)
-                .password(password)
-                .build();
         Coordinates coordinates = Coordinates.builder()
                 .latitudeInDegrees(latitude)
                 .longitudeInDegrees(longitude)
                 .build();
-        member.setCoordinates(coordinates);
-        Member createdMember = memberRepository.save(member);
+        foundMember.setCoordinates(coordinates);
+        Member updatedMember = memberRepository.save(foundMember);
 
         Optional<MemberDetailResponse> mayBeFoundMemberDetails = memberRepository.findDetail(username);
         Assertions
                 .assertThat(mayBeFoundMemberDetails.isPresent())
                 .isTrue();
-
         MemberDetailResponse foundMemberDetailResponse = mayBeFoundMemberDetails.get();
+
         Assertions
                 .assertThat(foundMemberDetailResponse.seq())
-                .isEqualTo(createdMember.getSeq());
+                .isEqualTo(updatedMember.getSeq());
         Assertions
                 .assertThat(foundMemberDetailResponse.latitude())
                 .isEqualTo(latitude);

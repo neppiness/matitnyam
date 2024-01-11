@@ -12,32 +12,33 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @SpringBootTest
-@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
+@Sql(value = "classpath:test/reset.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
+@Sql(value = "classpath:test/init.sql")
 class MemberServiceTest {
 
-    @Autowired
-    MemberService memberService;
+    private static final String username = "kim-jeonghyun";
+
+    private static final String password = "1234";
 
     @Autowired
-    MemberRepository memberRepository;
+    private MemberService memberService;
+
+    @Autowired
+    private MemberRepository memberRepository;
 
     @DisplayName("set 중복 요청 테스트")
     @Test
     void duplicatedMemberTest() {
-        String username = "kim-jeonghyun";
-        String password = "1234";
         MemberRequest memberRequest = MemberRequest.builder()
                 .name(username)
                 .password(password)
                 .build();
-
-        memberService.set(memberRequest);
 
         Assertions
                 .assertThatThrownBy(() -> memberService.set(memberRequest))
@@ -47,14 +48,10 @@ class MemberServiceTest {
     @DisplayName("signIn 테스트")
     @Test
     void signInTest() {
-        String username = "kim-jeonghyun";
-        String password = "1234";
         MemberRequest memberRequest = MemberRequest.builder()
                 .name(username)
                 .password(password)
                 .build();
-
-        memberService.set(memberRequest);
 
         TokenResponse response = memberService.signIn(memberRequest);
         System.out.println(response.token());
@@ -63,16 +60,8 @@ class MemberServiceTest {
     @DisplayName("update 테스트")
     @Test
     void updateTest() {
-        String username = "kim-jeonghyun";
-        String password = "1234";
         Double latitude = 3.14;
         Double longitude = 1.592;
-
-        MemberRequest memberRequest = MemberRequest.builder()
-                .name(username)
-                .password(password)
-                .build();
-        memberService.set(memberRequest);
 
         Coordinates coordinates = Coordinates.builder()
                 .latitudeInDegrees(latitude)
@@ -92,24 +81,13 @@ class MemberServiceTest {
         Assertions
                 .assertThat(foundMember.getLongitude())
                 .isEqualTo(longitude);
-        Assertions
-                .assertThat(memberRepository.findAll().size())
-                .isEqualTo(1);
     }
 
     @DisplayName("getDetail 테스트")
     @Test
     void getDetailTest() {
-        String username = "kim-jeonghyun";
-        String password = "1234";
         Double latitude = 3.14;
         Double longitude = 1.592;
-
-        MemberRequest memberRequest = MemberRequest.builder()
-                .name(username)
-                .password(password)
-                .build();
-        memberService.set(memberRequest);
 
         Coordinates coordinates = Coordinates.builder()
                 .latitudeInDegrees(latitude)
@@ -118,20 +96,15 @@ class MemberServiceTest {
         memberService.updateCoordinates(coordinates, username);
 
         Optional<MemberDetailResponse> mayBeFoundMemberDetails = memberRepository.findDetail(username);
-        Assertions
-                .assertThat(mayBeFoundMemberDetails.isPresent())
-                .isTrue();
-
+        assert mayBeFoundMemberDetails.isPresent();
         MemberDetailResponse foundMemberDetailResponse = mayBeFoundMemberDetails.get();
+
         Assertions
                 .assertThat(foundMemberDetailResponse.latitude())
                 .isEqualTo(latitude);
         Assertions
                 .assertThat(foundMemberDetailResponse.longitude())
                 .isEqualTo(longitude);
-        Assertions
-                .assertThat(memberRepository.findAll().size())
-                .isEqualTo(1);
     }
 
 }

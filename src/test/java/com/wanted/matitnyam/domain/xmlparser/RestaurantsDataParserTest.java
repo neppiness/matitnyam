@@ -13,10 +13,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class RestaurantsDataParserTest {
 
-    @Autowired
-    RestaurantsDataParser restaurantsDataParser;
+    private static final ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
 
-    private final ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
+    @Autowired
+    private RestaurantsDataParser restaurantsDataParser;
 
     @DisplayName("중식 음식점 파싱 테스트")
     @Test
@@ -24,8 +24,8 @@ class RestaurantsDataParserTest {
         String testFilePath = "test/chinese-restaurant-test.xml";
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(testFilePath);
         RestaurantsData restaurantsData = restaurantsDataParser.parse(ChineseRestaurants.class, inputStream);
-        String restaurantDataInJson = objectWriter.writeValueAsString(restaurantsData);
-        System.out.println(restaurantDataInJson);
+        String restaurantsDataAsString = objectWriter.writeValueAsString(restaurantsData);
+        System.out.println(restaurantsDataAsString);
     }
 
     @DisplayName("일식 음식점 파싱 테스트")
@@ -34,8 +34,8 @@ class RestaurantsDataParserTest {
         String testFilePath = "test/japanese-restaurant-test.xml";
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(testFilePath);
         RestaurantsData restaurantsData = restaurantsDataParser.parse(JapaneseRestaurants.class, inputStream);
-        String restaurantDataInJson = objectWriter.writeValueAsString(restaurantsData);
-        System.out.println(restaurantDataInJson);
+        String restaurantsDataAsString = objectWriter.writeValueAsString(restaurantsData);
+        System.out.println(restaurantsDataAsString);
     }
 
     @DisplayName("카페 파싱 테스트")
@@ -44,8 +44,8 @@ class RestaurantsDataParserTest {
         String testFilePath = "test/cafe-test.xml";
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(testFilePath);
         RestaurantsData restaurantsData = restaurantsDataParser.parse(Cafes.class, inputStream);
-        String restaurantDataInJson = objectWriter.writeValueAsString(restaurantsData);
-        System.out.println(restaurantDataInJson);
+        String restaurantsDataAsString = objectWriter.writeValueAsString(restaurantsData);
+        System.out.println(restaurantsDataAsString);
     }
 
 }

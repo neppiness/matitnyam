@@ -21,7 +21,7 @@ public class Review {
 
     private static final String ellipsis = "...";
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     Long seq;
 

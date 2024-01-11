@@ -9,13 +9,13 @@ import org.junit.jupiter.api.Test;
 
 class RestaurantRequestTest {
 
-    private final ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
+    private static final ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
 
-    private final Double latitude = 37.74913611;
+    private static final Double latitude = 37.74913611;
 
-    private final Double longitude = 128.8784972;
+    private static final Double longitude = 128.8784972;
 
-    private final Double range = 3.0;
+    private static final Double range = 3.0;
 
     @DisplayName("정렬 기준이 없는 경우 맛집 리스트 조회 요청 테스트: 정렬 기준이 거리순으로 설정된다.")
     @Test
@@ -30,8 +30,8 @@ class RestaurantRequestTest {
                 .assertThat(restaurantRequest.getSortType())
                 .isEqualTo(RestaurantSortType.DISTANCE);
 
-        String restaurantRequestInJson = objectWriter.writeValueAsString(restaurantRequest);
-        System.out.println(restaurantRequestInJson);
+        String restaurantRequestAsString = objectWriter.writeValueAsString(restaurantRequest);
+        System.out.println(restaurantRequestAsString);
     }
 
     @DisplayName("맛집 리스트 조회 시 정렬 기준이 '평점순'인 경우 맛집 리스트 조회 요청 테스트: 정렬 기준은 평점순으로 설정된다.")
@@ -48,8 +48,8 @@ class RestaurantRequestTest {
                 .assertThat(restaurantRequest.getSortType())
                 .isEqualTo(RestaurantSortType.RATE);
 
-        String restaurantRequestInJson = objectWriter.writeValueAsString(restaurantRequest);
-        System.out.println(restaurantRequestInJson);
+        String restaurantRequestAsString = objectWriter.writeValueAsString(restaurantRequest);
+        System.out.println(restaurantRequestAsString);
     }
 
 }

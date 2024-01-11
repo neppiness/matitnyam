@@ -38,4 +38,5 @@ public class PrincipalArgumentResolver implements HandlerMethodArgumentResolver 
         String token = splitAuthorizationString[1];
         return authTokenService.parseToken(token);
     }
+
 }

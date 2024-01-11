@@ -7,14 +7,21 @@ import org.junit.jupiter.api.Test;
 
 class RestaurantsDataPreprocessorTest {
 
-    String city = "용인시";
-    String name = "삼국지";
-    String closeOrOpen = "영업";
-    String typeOfFoods = "중국식";
-    String addressAsRoadName = "경기도 용인시 기흥구 한보라2로14번길 3-7 (보라동)";
-    String addressAsLocationName = "경기도 용인시 기흥구 보라동 586-4";
-    double latitude = 37.2539499121;
-    double longitude = 127.1119282508;
+    private static final String city = "용인시";
+
+    private static final String name = "삼국지";
+
+    private static final String closeOrOpen = "영업";
+
+    private static final String typeOfFoods = "중국식";
+
+    private static final String addressAsRoadName = "경기도 용인시 기흥구 한보라2로14번길 3-7 (보라동)";
+
+    private static final String addressAsLocationName = "경기도 용인시 기흥구 보라동 586-4";
+
+    private static final double latitude = 37.2539499121;
+
+    private static final double longitude = 127.1119282508;
 
     @DisplayName("전처리 로직 테스트 1: 정상동작")
     @Test
